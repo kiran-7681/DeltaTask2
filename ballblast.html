@@ -1,17 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ball blast</title>
+  <title>Game:Ball Blast</title>
   <style>
     #canvas {
-  width: 600px;
-  height: 400px;
-  border: 1px solid black;
-  position: absolute;
+        width: 600px;
+        height: 400px;
+        border: 2px solid black;
+        border-radius: 6px 6px 6px 6px;
+        position: absolute;
+        right: 28%;
+        top: 30%;
 }
+    #name{
+       top: 120px;
+       height: 34px;
+       border-radius: 8px 8px 8px 8px;
+       border-style: solid;
+       border-width: 2px;
+       border-color: #FF0000;
+       position: absolute;
+       width:300px;
+       height: 20px;
+       font-size: 18px;
+       padding: 10px;
+       left: 520px;  
+      }
+    #des {
+       top: 20px;
+       position: absolute;
+       left: 540px;
+       font-size: 30px;
+       font-style: 'Helvetica';
+     } 
   </style>
 </head>
 <body>
+  <meta charset="UTF-8">
+  <div id="index">
+  <p id="title"></p>
+  <p id="des">Enter your name below</p>
+  <input type="text" name="name" id="name" placeholder="Enter Your Name">
+  </div>
   <canvas id = "canvas" width = '600' height = '400' tabindex="1"></canvas>
   <script type="text/javascript" src="script.js"></script>
 </body>
