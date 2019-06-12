@@ -19,12 +19,12 @@ var left = false;
 var right = false;
 var space = false;
 var shooting = false;
-var bullet = makeSquare(0, 0, 5, 7);
+var bullet = makeSquare(0, 0, 7, 25);
 var enemies = [];
 var name;
-var arscore[];
+var arscore= [];
 var score = 0;
-var timeBetweenEnemies = 3 * 1000;
+var timeBetweenEnemies = 7 * 1000;
 var timeoutId;
 
 function makeenemy(x,y,radius,xspeed,yspeed,strength) {
@@ -35,14 +35,14 @@ function makeenemy(x,y,radius,xspeed,yspeed,strength) {
     sx: xspeed,
     sy: yspeed,
     num: strength,
-    num2: strength
+    num1: strength,
 
       draw: function() {
         context.beginPath();
         context.arc(this.x,this.y,this.r,0,2*Math.PI,true);
         context.fill();
-        context.fillStyle="#FFFFFF";
-        context.font = '10px Georgia';
+        context.fillStyle="#000000";
+        context.font = '15px Georgia';
         context.fillText(this.num,this.x-6,this.y+3);
       }
   }
@@ -55,10 +55,10 @@ function makeenemyarray(){
   else{
     var enemyX=canvas.width;
   }
-  var enemysize = 10;
+  var enemysize = 15;
   var enemyY=Math.floor(Math.random()*(3*canvas.height/4));
-  var enemyxspeed = Math.floor((Math.random()*5)+1);
-  var enemyyspeed = Math.floor((Math.random()*5)+1);
+  var enemyxspeed = Math.floor((Math.random()*3)+1);
+  var enemyyspeed = Math.floor((Math.random()*3)+1);
   var strength = Math.floor((Math.random()*25)+1);
   enemies.push(makeenemy(enemyX,enemyY,enemysize,enemyxspeed,enemyyspeed,strength));
 }
@@ -78,21 +78,33 @@ function isColliding(a, b) {
 }
 function menu() {
   erase();
-  context.fillStyle = '#000000';
-  context.font = '36px Arial';
+  context.fillStyle = '#8B0000';
+  context.font = '36px Georgia';
   context.textAlign = 'center';
-  context.fillText('Shoot \'Em!', canvas.width / 2, canvas.height / 4);
-  context.font = '24px Arial';
-  context.fillText('Click to Start', canvas.width / 2, canvas.height / 2);
-  context.font = '18px Arial';
+  context.fillText('Shoot them all', canvas.width / 2, canvas.height / 4);
+  context.font = '24px Georgia';
+  context.fillText('Click here to Start only when you have entered your name', canvas.width / 2, canvas.height / 2);
+  context.font = '18px Georgia';
   context.fillText('Left/A to move left,Right/D to move right, Space to shoot.', canvas.width / 2, (canvas.height / 4) * 3);
   canvas.addEventListener('click', startGame);
 }
 
+function erase() {
+  context.fillStyle = '#FFFFFF';
+  context.fillRect(0, 0, 600, 400);
+}
 
 function startGame() {
+  name=document.getElementById("name").value;
+   if(name.length>=10||name.length==0){
+    alert("Enter some name with less than 10 letter");
+   }else{
+    document.getElementById("index").style.display="none";
+    document.getElementById("canvas").style.display="inline-block";
+  }
   timeoutId = setInterval(makeenemyarray, timeBetweenEnemies);
   draw();
+  canvas.removeEventListener('click',startGame);
 }
 
 function endGame() {
@@ -101,42 +113,41 @@ function endGame() {
   erase();
   context.fillStyle = '#000000';
   context.font = '24px Arial';
-  context.textAlign = 'center';
+  context.textAlign = 'center';+-
   context.fillText('Game Over. Final Score: ' + score, canvas.width / 2, canvas.height / 2);
   arscore=JSON.parse(localStorage.getItem('sta'));
+  context.font = '20px Arial'
   arscore.sort(function(b,a){return a.sc-b.sc});
   
-    x=70;
-    dx=12.5;
+    x=40;
+    dx=20;
   for( i=0;i<6;i++){
-    context.fillText((i+1)+"."+arscore[i].nam+" : "+arscore[i].sc,10,x);
+    context.fillText((i+1)+"."+arscore[i].nam+" : "+arscore[i].sc,70,x);
     x=x+dx;
 }
+}
+canvas.addEventListener("keydown", keyDownHandler, false);
+canvas.addEventListener("keyup", keyUpHandler, false);
+ function keyDownHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight"|| e.keyCode == 68) {
+        right = true;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft"|| e.keyCode == 65) {
+        left = true;
+    }
+    if (e.keyCode == 32) { 
+         shoot();   
+  }
+}
 
-canvas.addEventListener('keyleft', function(event) {
-  event.preventDefault();
-  if ((event.keyCode === 37)||(event.keyCode === 65)) { // left
-    left = true;
-  }
-  if ((event.keyCode === 39)||(event.keyCode === 68)) { // right
-    right = true;
-  }
-  if ((event.keyCode === 32)||(event.keyCode === 87)||(event.keyCode === 38)) { // SPACE
-    shoot();
-  }
-});
-
-canvas.addEventListener('keyright', function(event) {
-  event.preventDefault();
-  if ((event.keyCode === 37)||(event.keyCode === 65)) { // left
-    left = false;
-  }
-  if ((event.keyCode === 39)||(event.keyCode === 68)) { // right
-    right = false;
-  }
-});   
-
-
+function keyUpHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight" || e.keyCode == 68) {
+        right = false;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft" || e.keyCode == 65) {
+        left = false;
+    }
+}
 
 function shoot() {
   if (!shooting) {
@@ -147,8 +158,8 @@ function shoot() {
 }
 
 function draw() {
+  erase();
   var gameOver = false;
-  context.clearRect(0,0,canvas.width,canvas.height);
   enemies.forEach(function(enemy) {
     enemy.x += enemy.sx;
     enemy.y += enemy.sy;
@@ -191,21 +202,22 @@ function draw() {
   context.fillStyle = '#FF0000';
   cannon.draw();
   if (shooting) {
-    bullet.y -= bullet.s;    enemies.forEach(function(enemy, i) {
+    bullet.y -= bullet.s;    
+    enemies.forEach(function(enemy, i) {
       if (isColliding(bullet, enemy)) {
          if(enemy.num>1){
            enemy.num--;
          }
          else{
           var enemyX=enemy.x;
-          var enemyxspeed = Math.floor((Math.random()*5)+1);
+          var enemyxspeed = Math.floor((Math.random()*3)+1);
           var enemyY=enemy.y;
-          var enemyyspeed = Math.floor((Math.random()*5)+1);
-          var enemysize = 10;
+          var enemyyspeed = Math.floor((Math.random()*3)+1);
+          var enemysize = 15;
           if(enemy.num%2==0){
-               var strength=enemy.num2/2;}
+               var strength=enemy.num1/2;}
                else{
-                var strength=(enemy.num2-1)/2;
+                var strength=Math.floor((enemy.num1-1)/2);
                }
                if(strength!=0){
               enemies.push(makeenemy(enemyX,enemyY,enemysize,enemyxspeed,enemyyspeed,strength));
@@ -228,7 +240,7 @@ function draw() {
   context.fillStyle = '#000000';
   context.font = '24px Arial';
   context.textAlign = 'left';
-  context.fillText('Score: ' + score, 1, 25)
+  context.fillText('Score: ' + score, 10, 50)
   if (gameOver) {
     endGame();
   } else {
