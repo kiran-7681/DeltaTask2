@@ -82,7 +82,7 @@ function menu() {
   context.font = '36px Georgia';
   context.textAlign = 'center';
   context.fillText('Shoot them all', canvas.width / 2, canvas.height / 4);
-  context.font = '24px Georgia';
+  context.font = '22px Georgia';
   context.fillText('Click here to Start only when you have entered your name', canvas.width / 2, canvas.height / 2);
   context.font = '18px Georgia';
   context.fillText('Left/A to move left,Right/D to move right, Space to shoot.', canvas.width / 2, (canvas.height / 4) * 3);
