@@ -1,25 +1,40 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-
+var img;
 
 function makeSquare(x, y, length, speed) {
   return {
     x: x,
     y: y,
-    l: length,
+    w: length,
+    h: length+5,
     s: speed,
     draw: function() {
-      context.fillRect(this.x, this.y, this.l, this.l);
+      context.fillRect(this.x, this.y, this.w, this.h);
     }
   };
 }
 
-var cannon = makeSquare(canvas.width / 2, 380, 30, 10);
+function makecannon(x,y,width,height,speed){
+  return{
+    x:x,
+    y:y,
+    w:width,
+    h:height,
+    s:speed,
+    draw:function(){
+    context.drawImage(img,this.x,this.y,this.w,this.h);
+
+  }
+  };
+}
+
+var cannon = makecannon(canvas.width / 2, canvas.height-45, 45, 45, 10);
 var left = false;
 var right = false;
 var space = false;
 var shooting = false;
-var bullet = makeSquare(0, 0, 7, 25);
+var bullet = makeSquare(0, 0, 7, 30);
 var enemies = [];
 var name;
 var arscore= [];
@@ -69,8 +84,8 @@ function isWithin(a, b, c) {
 
 function isColliding(a, b) {
   var result = false;
-  if (isWithin(a.x, (b.x-b.r), (b.x + b.r)) || isWithin(a.x + a.l, (b.x-b.r), (b.x + b.r))) {
-    if (isWithin(a.y, b.y-b.r, b.y + b.r) || isWithin(a.y + a.l, b.y-b.r, b.y + b.r)) {
+  if (isWithin(a.x, (b.x-b.r), (b.x + b.r)) || isWithin(a.x + a.w, (b.x-b.r), (b.x + b.r))) {
+    if (isWithin(a.y, b.y-b.r, b.y + b.r) || isWithin(a.y + a.h, b.y-b.r, b.y + b.r)) { 
       result = true;
     }
   }
@@ -82,8 +97,8 @@ function menu() {
   context.font = '36px Georgia';
   context.textAlign = 'center';
   context.fillText('Shoot them all', canvas.width / 2, canvas.height / 4);
-  context.font = '22px Georgia';
-  context.fillText('Click here to Start only when you have entered your name', canvas.width / 2, canvas.height / 2);
+  context.font = '20px Georgia';
+  context.fillText('Click on the canvas to Start only when you have entered your name', canvas.width / 2, canvas.height / 2);
   context.font = '18px Georgia';
   context.fillText('Left/A to move left,Right/D to move right, Space to shoot.', canvas.width / 2, (canvas.height / 4) * 3);
   canvas.addEventListener('click', startGame);
@@ -95,6 +110,10 @@ function erase() {
 }
 
 function startGame() {
+  img = new Image();
+  img.src="cannon.png";
+  img.onload=function()
+  {   
   name=document.getElementById("name").value;
    if(name.length>=10||name.length==0){
     alert("Enter some name with less than 10 letter");
@@ -105,6 +124,7 @@ function startGame() {
   timeoutId = setInterval(makeenemyarray, timeBetweenEnemies);
   draw();
   canvas.removeEventListener('click',startGame);
+}
 }
 
 function endGame() {
@@ -152,8 +172,8 @@ function keyUpHandler(e) {
 function shoot() {
   if (!shooting) {
     shooting = true;
-    bullet.x = cannon.x + cannon.l / 2;
-    bullet.y = cannon.y + cannon.l;
+    bullet.x = cannon.x + cannon.w/ 2;
+    bullet.y = cannon.y + cannon.h/2;
   }
 }
 
@@ -163,10 +183,10 @@ function draw() {
   enemies.forEach(function(enemy) {
     enemy.x += enemy.sx;
     enemy.y += enemy.sy;
-    if (enemy.x<0||enemy.x>(enemy.r+canvas.width)) {
+    if (enemy.x<0||enemy.x>canvas.width) {
       enemy.sx=-enemy.sx;
     }
-    if (enemy.y<0||enemy.y>(enemy.r+canvas.height) ){
+    if (enemy.y<0||enemy.y>canvas.height){
       enemy.sy=-enemy.sy;
     }
     context.fillStyle = '#00FF00';
@@ -196,8 +216,8 @@ function draw() {
   if (cannon.x < 0) {
     cannon.x = 0;
   }
-  if (cannon.x > canvas.width - cannon.l) {
-    cannon.x = canvas.width - cannon.l;
+  if (cannon.x > canvas.width - cannon.w) {
+    cannon.x = canvas.width - cannon.w;
   }
   context.fillStyle = '#FF0000';
   cannon.draw();
